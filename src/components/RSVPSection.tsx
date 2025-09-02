@@ -356,13 +356,24 @@ export default function RSVPSection({
 
             {/* Contenido del dialog */}
             <div className="p-6 space-y-4">
+              <div className="bg-white/5 rounded-2xl p-4 border border-white/10">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm text-gray-300 mb-1">Titular</p>
+                    <p className="text-lg font-semibold text-white">
+                      Tomas Derendinger Alvarez
+                    </p>
+                  </div>
+                  <button className="p-2 rounded-xl bg-yellow-400/20 hover:bg-yellow-400/30 transition-colors duration-300"></button>
+                </div>
+              </div>
               {/* Banco */}
               <div className="bg-white/5 rounded-2xl p-4 border border-white/10">
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-sm text-gray-300 mb-1">Billetera</p>
                     <p className="text-lg font-semibold text-white">
-                      Mercado Pago
+                      Naranja X
                     </p>
                   </div>
                   <button className="p-2 rounded-xl bg-yellow-400/20 hover:bg-yellow-400/30 transition-colors duration-300"></button>
@@ -375,7 +386,7 @@ export default function RSVPSection({
                   <div>
                     <p className="text-sm text-gray-300 mb-1">CBU</p>
                     <p className="text-lg font-semibold text-white font-mono">
-                      0110123456789012345678
+                      4530000800016602463077
                     </p>
                   </div>
                   <button
@@ -393,7 +404,7 @@ export default function RSVPSection({
                   <div>
                     <p className="text-sm text-gray-300 mb-1">Alias</p>
                     <p className="text-lg font-semibold text-white">
-                      CUMLEAÑOS.2025
+                      TOMASDERENDINGER.NX
                     </p>
                   </div>
                   <button

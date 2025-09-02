@@ -72,7 +72,7 @@ export default function HeroSection() {
               Celebramos
             </span>
             <span
-              className={`block bg-gradient-to-r from-amber-300 via-orange-400 to-red-500 bg-clip-text text-transparent transition-all duration-1200 ease-out text-shimmer name-glow ${
+              className={`block bg-gradient-to-r from-amber-200 via-yellow-300 to-orange-300 bg-clip-text text-transparent transition-all duration-1200 ease-out text-shimmer name-glow ${
                 isVisible
                   ? "translate-x-0 opacity-100"
                   : "translate-x-48 opacity-0"
@@ -81,7 +81,7 @@ export default function HeroSection() {
                 transitionDelay: "1000ms",
                 animationDelay: "1.5s",
                 textShadow:
-                  "0 0 20px rgba(251,191,36,0.8), 0 0 30px rgba(249,115,22,0.6), 0 0 40px rgba(239,68,68,0.4)",
+                  "0 0 20px rgba(251,191,36,0.6), 0 0 30px rgba(253,224,71,0.4), 0 0 40px rgba(251,146,60,0.3)",
               }}
             >
               27 años
@@ -106,7 +106,7 @@ export default function HeroSection() {
           />
           {/* Efecto de resplandor detrás del título */}
           <div
-            className="absolute inset-0 bg-gradient-to-r from-amber-400/20 via-orange-400/20 to-red-500/20 blur-3xl -z-10 animate-pulse"
+            className="absolute inset-0 bg-gradient-to-r from-amber-400/15 via-yellow-400/15 to-orange-400/15 blur-3xl -z-10 animate-pulse"
             style={{ animationDuration: "6s", animationDelay: "2s" }}
           />
         </div>
@@ -226,7 +226,7 @@ export default function HeroSection() {
         >
           <button
             onClick={scrollToRSVP}
-            className="group relative p-3 inline-flex items-center gap-4 bg-gradient-to-r bg-amber-300  text-white font-bold rounded-2xl transition-all duration-300 transform shadow-xl text-xl hover:scale-105 hover:shadow-[0_20px_40px_rgba(16,185,129,0.6)] active:scale-95 animate-float-button"
+            className="group relative p-3 inline-flex items-center gap-4 bg-gradient-to-r from-amber-500 via-yellow-500 to-orange-500 hover:from-amber-600 hover:via-yellow-600 hover:to-orange-600 text-black font-bold rounded-2xl transition-all duration-300 transform shadow-xl text-xl hover:scale-105 hover:shadow-[0_20px_40px_rgba(251,191,36,0.6)] active:scale-95 animate-float-button"
             style={{}}
           >
             <span>Confirmar Asistencia</span>
@@ -271,14 +271,14 @@ export default function HeroSection() {
         }}
       />
       <div
-        className="absolute top-1/3 right-4 sm:right-20 w-1 h-1 bg-orange-400 rounded-full opacity-90"
+        className="absolute top-1/3 right-4 sm:right-20 w-1 h-1 bg-yellow-400 rounded-full opacity-90"
         style={{
           animation: "pulse 4s ease-in-out infinite",
           animationDelay: "1s",
         }}
       />
       <div
-        className="absolute bottom-1/3 left-4 sm:left-20 w-1.5 h-1.5 bg-red-400 rounded-full opacity-60"
+        className="absolute bottom-1/3 left-4 sm:left-20 w-1.5 h-1.5 bg-orange-400 rounded-full opacity-60"
         style={{
           animation: "pulse 5s ease-in-out infinite",
           animationDelay: "2s",

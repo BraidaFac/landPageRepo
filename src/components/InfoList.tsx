@@ -25,11 +25,11 @@ export const InfoList: React.FC = () => {
       items: [
         {
           icon: <FaCalendarAlt className="text-yellow-400 text-sm" />,
-          text: "Viernes 20 de septiembre",
+          text: "Sabado 20 de septiembre",
         },
         {
           icon: <FaClock className="text-yellow-400 text-sm" />,
-          text: "Al mediodía (12:00 hs)",
+          text: "Al mediodía",
         },
       ],
       delay: 600,
