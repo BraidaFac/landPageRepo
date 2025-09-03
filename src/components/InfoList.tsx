@@ -62,7 +62,7 @@ export const InfoList: React.FC = () => {
       items: [
         {
           icon: <FaDollarSign className="text-blue-400" />,
-          text: "Contribución: $5.000",
+          text: "Contribución: $6.000",
           className: "text-2xl text-blue-400",
         },
       ],
