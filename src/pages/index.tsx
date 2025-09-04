@@ -1,7 +1,6 @@
 import { useState } from "react";
-import { useForm } from "react-hook-form";
 import { FaBirthdayCake, FaWhatsapp } from "react-icons/fa";
-import { toast, ToastContainer } from "react-toastify";
+import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import EventInfoSection from "../components/EventInfoSection";
 import HeroSection from "../components/HeroSection";
@@ -10,51 +9,8 @@ import RSVPSection from "../components/RSVPSection";
 import SplashScreen from "../components/SplashScreen";
 import WhatToBringSection from "../components/WhatToBringSection";
 
-interface FormData {
-  nombre: string;
-  formaPago: string;
-}
-
 export default function Home() {
   const [showHome, setshowHome] = useState(false);
-
-  const {
-    register,
-    handleSubmit,
-    formState: { errors, isSubmitting },
-    reset,
-    watch,
-    setValue,
-  } = useForm<FormData>();
-
-  const onSubmit = async (data: FormData) => {
-    try {
-      reset();
-
-      const response = await fetch("/api/rsvp", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      });
-
-      if (!response.ok) {
-        toast.error(response.statusText);
-      } else {
-        toast.success("¡Confirmación exitosa!");
-      }
-    } catch (error) {
-      console.error("Error submitting form:", error);
-      toast.error(
-        "Hubo un error al enviar el formulario. Por favor intentá de nuevo."
-      );
-    }
-  };
-
-  const handleFormSubmit = (data: FormData) => {
-    onSubmit(data);
-  };
 
   return (
     <>
@@ -112,15 +68,7 @@ export default function Home() {
           <EventInfoSection />
           <WhatToBringSection />
           {/* <GallerySection /> */}
-          <RSVPSection
-            register={register}
-            handleSubmit={handleSubmit}
-            errors={errors}
-            isSubmitting={isSubmitting}
-            onFormSubmit={handleFormSubmit}
-            watch={watch}
-            setValue={setValue}
-          />
+          <RSVPSection />
           <MapSection />
 
           {/* Floating action button - contacto rápido */}

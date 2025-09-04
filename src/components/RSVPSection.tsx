@@ -1,11 +1,5 @@
 import { useEffect, useState } from "react";
-import {
-  FieldErrors,
-  UseFormHandleSubmit,
-  UseFormRegister,
-  UseFormSetValue,
-  UseFormWatch,
-} from "react-hook-form";
+import { useForm } from "react-hook-form";
 import {
   FaCheckCircle,
   FaCopy,
@@ -23,28 +17,50 @@ interface FormData {
   formaPago: string;
 }
 
-interface RSVPSectionProps {
-  register: UseFormRegister<FormData>;
-  handleSubmit: UseFormHandleSubmit<FormData>;
-  errors: FieldErrors<FormData>;
-  isSubmitting: boolean;
-  onFormSubmit: (data: FormData) => void;
-  watch: UseFormWatch<FormData>;
-  setValue: UseFormSetValue<FormData>;
-}
-
-export default function RSVPSection({
-  register,
-  handleSubmit,
-  errors,
-  isSubmitting,
-  onFormSubmit,
-  watch,
-  setValue,
-}: RSVPSectionProps) {
+export default function RSVPSection() {
   const [isVisible, setIsVisible] = useState(false);
   const [showTransferenciaInfo, setShowTransferenciaInfo] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+    reset,
+    watch,
+    setValue,
+  } = useForm<FormData>();
+
   const formaPago = watch("formaPago");
+  const onSubmit = async (data: FormData) => {
+    try {
+      setIsLoading(true);
+      reset();
+
+      const response = await fetch("/api/rsvp", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
+
+      if (!response.ok) {
+        toast.error(response.statusText);
+      } else {
+        toast.success("¡Confirmación exitosa!");
+      }
+    } catch (error) {
+      console.error("Error submitting form:", error);
+      toast.error("Por favor intentá de nuevo.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleFormSubmit = async (data: FormData) => {
+    await onSubmit(data);
+  };
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -119,7 +135,7 @@ export default function RSVPSection({
             style={{ transitionDelay: "600ms" }}
           >
             <form
-              onSubmit={handleSubmit(onFormSubmit)}
+              onSubmit={handleSubmit(handleFormSubmit)}
               className="relative group md:w-3/5 mx-auto"
             >
               {/* Contenedor principal del formulario */}
@@ -130,196 +146,204 @@ export default function RSVPSection({
                 {/* Borde animado */}
                 <div className="absolute inset-0 rounded-3xl bg-gradient-to-r from-yellow-400/20 via-orange-400/20 to-red-400/20 opacity-0 group-hover:opacity-100 transition-opacity duration-700 -z-10 blur-md" />
 
-                {/* Contenido del formulario */}
-                <div className="relative p-8 sm:p-12">
-                  {/* Campo de nombre */}
-                  <div className="mb-10">
-                    <label className=" text-white mb-4 text-xl font-semibold flex items-center gap-3">
-                      <div className="p-2 rounded-xl bg-gradient-to-br from-yellow-400/20 to-orange-400/20">
-                        <FaUser className="text-yellow-400 text-lg" />
-                      </div>
-                      Tu nombre completo
-                    </label>
-
-                    <div className="relative group/input">
-                      <input
-                        {...register("nombre", {
-                          required: "Por favor ingresá tu nombre",
-                          minLength: {
-                            value: 2,
-                            message:
-                              "El nombre debe tener al menos 2 caracteres",
-                          },
-                        })}
-                        type="text"
-                        placeholder="Ej: Porki"
-                        className="w-full bg-white/10 border-2 border-white/20 rounded-2xl text-white placeholder-gray-400 focus:border-yellow-400 focus:ring-4 focus:ring-yellow-400/20 transition-all duration-500 text-lg px-6 py-4 backdrop-blur-sm group-hover/input:bg-white/15 group-hover/input:border-white/30"
-                      />
-
-                      {/* Efecto de brillo en el input */}
-                      <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-yellow-400/10 to-orange-400/10 opacity-0 group-hover/input:opacity-100 transition-opacity duration-500 -z-10" />
-                    </div>
-
-                    {errors.nombre && (
-                      <div className="mt-3 flex items-center gap-2 text-red-400 animate-pulse">
-                        <div className="w-2 h-2 bg-red-400 rounded-full" />
-                        <p className="text-sm font-medium">
-                          {errors.nombre.message}
-                        </p>
-                      </div>
-                    )}
+                {isLoading ? (
+                  <div className="flex items-center justify-center h-80 md:h-100">
+                    <FaSpinner className="animate-spin text-4xl text-amber-500" />
                   </div>
+                ) : (
+                  /* Contenido del formulario */
+                  <div className="relative p-8 sm:p-12">
+                    {/* Campo de nombre */}
+                    <div className="mb-10">
+                      <label className=" text-white mb-4 text-xl font-semibold flex items-center gap-3">
+                        <div className="p-2 rounded-xl bg-gradient-to-br from-yellow-400/20 to-orange-400/20">
+                          <FaUser className="text-yellow-400 text-lg" />
+                        </div>
+                        Tu nombre completo
+                      </label>
 
-                  {/* Opción de pago */}
-                  <div className="mb-12">
-                    <label className=" text-white text-xl font-semibold mb-6 flex items-center gap-3">
-                      <div className="p-2 rounded-xl bg-gradient-to-br from-green-400/20 to-blue-400/20">
-                        <FaCreditCard className="text-green-400 text-lg" />
-                      </div>
-                      Forma de pago
-                    </label>
-
-                    <div className="space-y-6 gap-y-10">
-                      {/* Opción Transferencia */}
-                      <div
-                        className="relative group/checkbox cursor-pointer"
-                        onClick={() => handlePagoChange("Transferencia")}
-                      >
+                      <div className="relative group/input">
                         <input
-                          {...register("formaPago", {
-                            required: "Por favor seleccioná una forma de pago",
+                          {...register("nombre", {
+                            required: "Por favor ingresá tu nombre",
+                            minLength: {
+                              value: 2,
+                              message:
+                                "El nombre debe tener al menos 2 caracteres",
+                            },
                           })}
-                          type="radio"
-                          value="Transferencia"
-                          className="sr-only"
+                          type="text"
+                          placeholder="Ej: Porki"
+                          className="w-full bg-white/10 border-2 border-white/20 rounded-2xl text-white placeholder-gray-400 focus:border-yellow-400 focus:ring-4 focus:ring-yellow-400/20 transition-all duration-500 text-lg px-6 py-4 backdrop-blur-sm group-hover/input:bg-white/15 group-hover/input:border-white/30"
                         />
 
-                        <div
-                          className={`flex items-center gap-4 p-4 rounded-2xl border-2 transition-all duration-300 ${
-                            formaPago === "Transferencia"
-                              ? "bg-yellow-400/20 border-yellow-400/40"
-                              : "bg-white/5 border-white/10 group-hover/checkbox:bg-white/10 group-hover/checkbox:border-white/20"
-                          }`}
-                        >
-                          {/* Radio personalizado */}
-                          <div
-                            className={`relative w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all duration-300 ${
-                              formaPago === "Transferencia"
-                                ? "border-yellow-400 bg-yellow-400"
-                                : "border-white/30 group-hover/checkbox:border-yellow-400"
-                            }`}
-                          >
-                            {formaPago === "Transferencia" && (
-                              <div className="w-3 h-3 bg-black rounded-full" />
-                            )}
-                          </div>
-
-                          <div
-                            className={`flex items-center gap-4 transition-colors ${
-                              formaPago === "Transferencia"
-                                ? "text-white"
-                                : "text-gray-300 group-hover/checkbox:text-white"
-                            }`}
-                          >
-                            <FaCreditCard className="text-yellow-400 text-xl" />
-                            <span className="text-lg font-medium">
-                              Transferencia
-                            </span>
-                          </div>
-                        </div>
-
-                        {/* Efecto de selección */}
-                        <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-yellow-400/10 to-orange-400/10 opacity-0 group-hover/checkbox:opacity-100 transition-opacity duration-300 -z-10" />
+                        {/* Efecto de brillo en el input */}
+                        <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-yellow-400/10 to-orange-400/10 opacity-0 group-hover/input:opacity-100 transition-opacity duration-500 -z-10" />
                       </div>
 
-                      {/* Opción Efectivo */}
-                      <div
-                        className="relative group/checkbox cursor-pointer"
-                        onClick={() => handlePagoChange("Efectivo")}
-                      >
-                        <input
-                          {...register("formaPago", {
-                            required: "Por favor seleccioná una forma de pago",
-                          })}
-                          type="radio"
-                          value="Efectivo"
-                          className="sr-only"
-                        />
-
-                        <div
-                          className={`flex items-center gap-4 p-4 rounded-2xl border-2 transition-all duration-300 ${
-                            formaPago === "Efectivo"
-                              ? "bg-green-400/20 border-green-400/40"
-                              : "bg-white/5 border-white/10 group-hover/checkbox:bg-white/10 group-hover/checkbox:border-white/20"
-                          }`}
-                        >
-                          {/* Radio personalizado */}
-                          <div
-                            className={`relative w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all duration-300 ${
-                              formaPago === "Efectivo"
-                                ? "border-green-400 bg-green-400"
-                                : "border-white/30 group-hover/checkbox:border-green-400"
-                            }`}
-                          >
-                            {formaPago === "Efectivo" && (
-                              <div className="w-3 h-3 bg-black rounded-full" />
-                            )}
-                          </div>
-
-                          <div
-                            className={`flex items-center gap-4 transition-colors ${
-                              formaPago === "Efectivo"
-                                ? "text-white"
-                                : "text-gray-300 group-hover/checkbox:text-white"
-                            }`}
-                          >
-                            <FaMoneyBillWave className="text-green-400 text-xl" />
-                            <span className="text-lg font-medium">
-                              Efectivo
-                            </span>
-                          </div>
+                      {errors.nombre && (
+                        <div className="mt-3 flex items-center gap-2 text-red-400 animate-pulse">
+                          <div className="w-2 h-2 bg-red-400 rounded-full" />
+                          <p className="text-sm font-medium">
+                            {errors.nombre.message}
+                          </p>
                         </div>
-                        {errors.formaPago && (
-                          <div className="mt-3 flex items-center gap-2 text-red-400 animate-pulse">
-                            <div className="w-2 h-2 bg-red-400 rounded-full" />
-                            <p className="text-sm font-medium">
-                              {errors.formaPago.message}
-                            </p>
+                      )}
+                    </div>
+
+                    {/* Opción de pago */}
+                    <div className="mb-12">
+                      <label className=" text-white text-xl font-semibold mb-6 flex items-center gap-3">
+                        <div className="p-2 rounded-xl bg-gradient-to-br from-green-400/20 to-blue-400/20">
+                          <FaCreditCard className="text-green-400 text-lg" />
+                        </div>
+                        Forma de pago
+                      </label>
+
+                      <div className="space-y-6 gap-y-10">
+                        {/* Opción Transferencia */}
+                        <div
+                          className="relative group/checkbox cursor-pointer"
+                          onClick={() => handlePagoChange("Transferencia")}
+                        >
+                          <input
+                            {...register("formaPago", {
+                              required:
+                                "Por favor seleccioná una forma de pago",
+                            })}
+                            type="radio"
+                            value="Transferencia"
+                            className="sr-only"
+                          />
+
+                          <div
+                            className={`flex items-center gap-4 p-4 rounded-2xl border-2 transition-all duration-300 ${
+                              formaPago === "Transferencia"
+                                ? "bg-yellow-400/20 border-yellow-400/40"
+                                : "bg-white/5 border-white/10 group-hover/checkbox:bg-white/10 group-hover/checkbox:border-white/20"
+                            }`}
+                          >
+                            {/* Radio personalizado */}
+                            <div
+                              className={`relative w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all duration-300 ${
+                                formaPago === "Transferencia"
+                                  ? "border-yellow-400 bg-yellow-400"
+                                  : "border-white/30 group-hover/checkbox:border-yellow-400"
+                              }`}
+                            >
+                              {formaPago === "Transferencia" && (
+                                <div className="w-3 h-3 bg-black rounded-full" />
+                              )}
+                            </div>
+
+                            <div
+                              className={`flex items-center gap-4 transition-colors ${
+                                formaPago === "Transferencia"
+                                  ? "text-white"
+                                  : "text-gray-300 group-hover/checkbox:text-white"
+                              }`}
+                            >
+                              <FaCreditCard className="text-yellow-400 text-xl" />
+                              <span className="text-lg font-medium">
+                                Transferencia
+                              </span>
+                            </div>
                           </div>
-                        )}
-                        {/* Efecto de selección */}
-                        <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-green-400/10 to-blue-400/10 opacity-0 group-hover/checkbox:opacity-100 transition-opacity duration-300 -z-10" />
+
+                          {/* Efecto de selección */}
+                          <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-yellow-400/10 to-orange-400/10 opacity-0 group-hover/checkbox:opacity-100 transition-opacity duration-300 -z-10" />
+                        </div>
+
+                        {/* Opción Efectivo */}
+                        <div
+                          className="relative group/checkbox cursor-pointer"
+                          onClick={() => handlePagoChange("Efectivo")}
+                        >
+                          <input
+                            {...register("formaPago", {
+                              required:
+                                "Por favor seleccioná una forma de pago",
+                            })}
+                            type="radio"
+                            value="Efectivo"
+                            className="sr-only"
+                          />
+
+                          <div
+                            className={`flex items-center gap-4 p-4 rounded-2xl border-2 transition-all duration-300 ${
+                              formaPago === "Efectivo"
+                                ? "bg-green-400/20 border-green-400/40"
+                                : "bg-white/5 border-white/10 group-hover/checkbox:bg-white/10 group-hover/checkbox:border-white/20"
+                            }`}
+                          >
+                            {/* Radio personalizado */}
+                            <div
+                              className={`relative w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all duration-300 ${
+                                formaPago === "Efectivo"
+                                  ? "border-green-400 bg-green-400"
+                                  : "border-white/30 group-hover/checkbox:border-green-400"
+                              }`}
+                            >
+                              {formaPago === "Efectivo" && (
+                                <div className="w-3 h-3 bg-black rounded-full" />
+                              )}
+                            </div>
+
+                            <div
+                              className={`flex items-center gap-4 transition-colors ${
+                                formaPago === "Efectivo"
+                                  ? "text-white"
+                                  : "text-gray-300 group-hover/checkbox:text-white"
+                              }`}
+                            >
+                              <FaMoneyBillWave className="text-green-400 text-xl" />
+                              <span className="text-lg font-medium">
+                                Efectivo
+                              </span>
+                            </div>
+                          </div>
+                          {errors.formaPago && (
+                            <div className="mt-3 flex items-center gap-2 text-red-400 animate-pulse">
+                              <div className="w-2 h-2 bg-red-400 rounded-full" />
+                              <p className="text-sm font-medium">
+                                {errors.formaPago.message}
+                              </p>
+                            </div>
+                          )}
+                          {/* Efecto de selección */}
+                          <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-green-400/10 to-blue-400/10 opacity-0 group-hover/checkbox:opacity-100 transition-opacity duration-300 -z-10" />
+                        </div>
                       </div>
                     </div>
-                  </div>
 
-                  {/* Botón de envío */}
-                  <div className="text-center mb-8">
-                    <button
-                      type="submit"
-                      disabled={isSubmitting}
-                      className="relative group/button inline-flex items-center gap-4 bg-gradient-to-r from-yellow-400 via-orange-500 to-red-500 hover:from-yellow-500 hover:via-orange-600 hover:to-red-600 disabled:from-gray-400 disabled:via-gray-500 disabled:to-gray-600 text-black font-bold rounded-2xl transition-all duration-500 transform hover:scale-105 hover:shadow-2xl disabled:scale-100 disabled:cursor-not-allowed px-8 py-4 text-lg overflow-hidden"
-                    >
-                      {/* Efecto de brillo en el botón */}
-                      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover/button:translate-x-full transition-transform duration-700" />
+                    {/* Botón de envío */}
+                    <div className="text-center mb-8">
+                      <button
+                        type="submit"
+                        disabled={isSubmitting}
+                        className="relative group/button inline-flex items-center gap-4 bg-gradient-to-r from-yellow-400 via-orange-500 to-red-500 hover:from-yellow-500 hover:via-orange-600 hover:to-red-600 disabled:from-gray-400 disabled:via-gray-500 disabled:to-gray-600 text-black font-bold rounded-2xl transition-all duration-500 transform hover:scale-105 hover:shadow-2xl disabled:scale-100 disabled:cursor-not-allowed px-8 py-4 text-lg overflow-hidden"
+                      >
+                        {/* Efecto de brillo en el botón */}
+                        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover/button:translate-x-full transition-transform duration-700" />
 
-                      {/* Contenido del botón */}
-                      <div className="relative flex items-center gap-4">
-                        {isSubmitting ? (
-                          <>
-                            <FaSpinner className="animate-spin text-2xl" />
-                            <span>Confirmando...</span>
-                          </>
-                        ) : (
-                          <>
-                            <FaCheckCircle className="text-2xl group-hover/button:scale-110 transition-transform duration-300" />
-                            <span>Confirmar Asistencia</span>
-                          </>
-                        )}
-                      </div>
-                    </button>
+                        {/* Contenido del botón */}
+                        <div className="relative flex items-center gap-4">
+                          {isSubmitting ? (
+                            <>
+                              <FaSpinner className="animate-spin text-2xl" />
+                              <span>Confirmando...</span>
+                            </>
+                          ) : (
+                            <>
+                              <FaCheckCircle className="text-2xl group-hover/button:scale-110 transition-transform duration-300" />
+                              <span>Confirmar Asistencia</span>
+                            </>
+                          )}
+                        </div>
+                      </button>
+                    </div>
                   </div>
-                </div>
+                )}
               </div>
             </form>
           </div>
