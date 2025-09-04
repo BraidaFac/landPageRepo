@@ -24,7 +24,7 @@ export default function HeroSection() {
         isVisible ? "opacity-100" : "opacity-0"
       }`}
     >
-      <div className="relative z-10 text-center text-white px-4 sm:px-8 max-w-6xl mx-auto w-full overflow-hidden">
+      <div className="relative mt-6 md:mt-0 z-10 text-center text-white px-4 sm:px-8 max-w-6xl mx-auto w-full overflow-hidden">
         {/* Badge superior con animación espectacular */}
         <div
           className={`mb-1 spring-transition ${
@@ -113,7 +113,7 @@ export default function HeroSection() {
 
         {/* Información de cumpleañeros con animación stagger */}
         <div
-          className={`mb-2 space-y-6 transition-all duration-1000 ease-out ${
+          className={`md:mb-2 mt-20 space-y-6 transition-all duration-1000 ease-out ${
             isVisible ? "translate-y-0 opacity-100" : "translate-y-24 opacity-0"
           }`}
           style={{
@@ -215,7 +215,7 @@ export default function HeroSection() {
 
         {/* CTA Button con animación espectacular */}
         <div
-          className={` transition-all duration-1000 ease-out ${
+          className={`mt-12 md:mt-0 transition-all duration-1000 ease-out ${
             isVisible
               ? "scale-100 opacity-100 translate-y-0"
               : "scale-0 opacity-0 translate-y-24"
