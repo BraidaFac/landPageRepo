@@ -20,7 +20,7 @@ export default function HeroSection() {
   return (
     <section
       ref={sectionRef}
-      className={`min-h-screen flex pt-16 sm:pt-10 snap-start relative overflow-hidden transition-opacity duration-1500 ease-out ${
+      className={`min-h-screen flex pt-4 sm:pt-10 snap-start relative overflow-hidden transition-opacity duration-1500 ease-out ${
         isVisible ? "opacity-100" : "opacity-0"
       }`}
     >

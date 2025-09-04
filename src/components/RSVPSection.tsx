@@ -422,7 +422,7 @@ export default function RSVPSection({
                   <p className="text-sm text-gray-300 mb-1">
                     Monto a transferir
                   </p>
-                  <p className="text-2xl font-bold text-yellow-400">$5.000</p>
+                  <p className="text-2xl font-bold text-yellow-400">$6.000</p>
                 </div>
               </div>
 
