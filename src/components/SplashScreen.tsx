@@ -145,7 +145,7 @@ export default function SplashScreen({ onComplete }: SplashScreenProps) {
             • Quinta El Zorzal
           </p>
           <p className="text-lg text-gray-500">
-            Viernes 20 de septiembre al mediodía
+            Sabado 20 de septiembre al mediodía
           </p>
         </div>
 
